@@ -1,71 +1,75 @@
+package de.virtualpahl.crypto.trade.cex.seller;
 /**
  * This project is licensed under the terms of the MIT license, you can read
  * more in LICENSE.txt; this project utilized the Google GSON library, licensed
  * under the Apache V2 License, which can be found at: gson/LICENSE.txt
  * 
- * Dashboard.java
- * Version  : 1.1.0
- * Author   : Zack Urben
- * Contact  : zackurben@gmail.com
- * Creation : 12/31/13
+ * DashboardSeller.java is based on the cex.io-reinvestor of Zack Urben
+ * Version  : 1.0.0
+ * Author   : Tobias Pahl
+ * Contact  : tobias@virtual-pahl.de
+ * Creation : 10.04.2018
  * 
- * This is Dashboard GUI for the Reinvestor, when run in GUI mode.
+ * Motivation BTC    @ 3JEh8HAT5qntRUtET9xnaWGyrKVExTQnXv (minimum 0.0001 BTC)
+ * Cex.io referral   @ https://cex.io/r/0/up114757661/0/
+ * PayPal			 @ https://www.paypal.me/TobiasPahl
+ * Other donations accepted via email request!
  * 
- * Support:
- * Motivation BTC       @ 1HvXfXRP9gZqHPkQUCPKmt5wKyXDMADhvQ
- * Cex.io Referral      @ https://cex.io/r/0/kannibal3/0/
- * Scrypt Referral      @ http://scrypt.cc?ref=baaah
- * Cryptsy Trade Key    @ e5447842f0b6605ad45ced133b4cdd5135a4838c
- * Other donations accepted via email request.
+ * This is Dashboard GUI for the CexSeller, when run in GUI mode.
  */
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.JTabbedPane;
-import javax.swing.JCheckBox;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import java.awt.Font;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Scanner;
-import javax.swing.JScrollPane;
+
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import zackurben.cex.data.Balance;
+
 import com.google.gson.Gson;
+
+import zackurben.cex.data.Balance;
 
 public class Dashboard {
     protected JFrame FRAME_DASHBOARD;
-    protected JTextField DISPLAY_USERNAME, DISPLAY_STATUS, INPUT_RESERVE_BTC,
-        INPUT_MAX_BTC, INPUT_MIN_BTC, DISPLAY_API_CALLS, DISPLAY_ORDERS, 
+    protected JTextField DISPLAY_USERNAME, DISPLAY_STATUS, INPUT_RESERVE_COIN,
+        INPUT_MAX_COIN, INPUT_MIN_COIN, DISPLAY_API_CALLS, DISPLAY_ORDERS, 
         DISPLAY_CANCELED, DISPLAY_PENDING, DISPLAY_START_TIME, 
         DISPLAY_LAST_ACTIVITY, DISPLAY_DURATION;
     protected JPanel PANEL, TAB_SETTINGS, TAB_INFO, TAB_LOG, TAB_ABOUT;
     protected JTabbedPane PANEL_TAB;
-    protected JLabel LABEL_USERNAME, LABEL_STATUS, LABEL_COINS, LABEL_MAX,
-        LABEL_MIN, LABEL_RESERVE, LABEL_BALANCE, LABEL_API_CALLS, LABEL_ORDERS,
+    protected JLabel LABEL_USERNAME, LABEL_STATUS, LABEL_COINS, LABEL_MIN,
+        LABEL_MAX, LABEL_RESERVE, LABEL_BALANCE, LABEL_API_CALLS, LABEL_ORDERS,
         LABEL_CANCELED, LABEL_PENDING, LABEL_START_TIME, LABEL_LAST_ACTIVITY,
         LABEL_DURATION;
-    protected JToggleButton BUTTON_TOGGLE_REINVESTOR;
+    protected JLabel LABEL_MIN_AMOUNT;
+    protected JTextField INPUT_MIN_AMOUNT_COIN;
+    protected JToggleButton BUTTON_TOGGLE_SELLER;
     protected JButton BUTTON_SAVE;
-    protected JCheckBox CHECKBOX_BTC;
+    protected JCheckBox CHECKBOX_COIN;
     protected JTextArea DISPLAY_LOG;
     protected JTextPane DISPLAY_BALANCE, TEXTPANE_ABOUT, TEXTPANE_BTC,
         TEXTPANE_CEX, TEXTPANE_CRYPTSY, TEXTPANE_SCRYPT;
     protected JScrollPane SCROLLPANE;
     protected long NUM_START_TIME;
     protected long NUM_LAST_ACTIVITY;
-    protected Reinvestor user;
+    protected Seller user;
 
     /**
      * Create the application.
@@ -73,14 +77,12 @@ public class Dashboard {
     public Dashboard(String user, String apiKey, String apiSecret) {
         initialize();
         this.FRAME_DASHBOARD.setVisible(true);
-        this.user = new Reinvestor(user, apiKey, apiSecret, this);
+        this.user = new Seller(user, apiKey, apiSecret, this);
         this.user.start();
-        // FIXME LoadSettings
-//        loadSettings();
+        loadSettings();
 
         // query user balance
-        this.user.balance = new Gson().fromJson(this.user.execute("balance",
-            new String[] {}), Balance.class);
+        this.user.balance = new Gson().fromJson(this.user.execute("balance", new String[] {}), Balance.class);
     }
 
     /**
@@ -88,14 +90,13 @@ public class Dashboard {
      */
     private void initialize() {
         FRAME_DASHBOARD = new JFrame();
-        FRAME_DASHBOARD
-            .setTitle("Cex.io Reinvestor v1.1.1 - By Zack Urben");
-        FRAME_DASHBOARD.setBounds(100, 100, 610, 410);
+        FRAME_DASHBOARD.setTitle("Cex.io Seller v1.0.0 - By Merlin2010");
+        FRAME_DASHBOARD.setBounds(100, 100, 1030, 800);
         FRAME_DASHBOARD.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FRAME_DASHBOARD.getContentPane().setLayout(null);
 
         PANEL = new JPanel();
-        PANEL.setBounds(6, 6, 588, 366);
+        PANEL.setBounds(6, 6, 999, 777);
         PANEL.setLayout(null);
         FRAME_DASHBOARD.getContentPane().add(PANEL);
 
@@ -110,38 +111,36 @@ public class Dashboard {
         DISPLAY_USERNAME.setColumns(10);
         PANEL.add(DISPLAY_USERNAME);
 
-        BUTTON_TOGGLE_REINVESTOR = new JToggleButton("Toggle Reinvestor");
-        BUTTON_TOGGLE_REINVESTOR.setBounds(377, 7, 200, 29);
-        BUTTON_TOGGLE_REINVESTOR.addActionListener(new ActionListener() {
+        BUTTON_TOGGLE_SELLER = new JToggleButton("Toggle Seller");
+        BUTTON_TOGGLE_SELLER.setBounds(377, 7, 200, 29);
+        BUTTON_TOGGLE_SELLER.addActionListener(new ActionListener() {
+        	
             public void actionPerformed(ActionEvent evt) {
-                if (BUTTON_TOGGLE_REINVESTOR.isSelected()) {
+                if (BUTTON_TOGGLE_SELLER.isSelected()) {
                     // update all values in obj from gui
                     updateSettings();
                     user.saveSettings();
-                    user.addReinvestorThread();
+                    user.addSellerThread();
                 } else {
                     // button is deselected
-                    // stop reinvestment thread
-                    user.reinvest.interrupt();
-                    user.reinvest.stop = true;
+                    // stop selling thread
+                    user.selling.interrupt();
+                    user.selling.stop = true;
 
                     try {
-                        user.reinvest.join();
+                        user.selling.join();
                     } catch (InterruptedException e) {
                         // Thread.currentThread().interrupt();
-                        // e.printStackTrace();
                         user.out("Error 0x3.");
                         user.log("error", "Error 0x3:\n" + e.getMessage());
                     }
 
                     DISPLAY_STATUS.setText("Idle");
-                    DISPLAY_LOG.append("["
-                        + new Date(System.currentTimeMillis()).toString()
-                        + "] Idle.\n");
+                    DISPLAY_LOG.append("[" + new Date(System.currentTimeMillis()) + "] Idle.\n");
                 }
             }
         });
-        PANEL.add(BUTTON_TOGGLE_REINVESTOR);
+        PANEL.add(BUTTON_TOGGLE_SELLER);
 
         LABEL_STATUS = new JLabel("Status:");
         LABEL_STATUS.setBounds(220, 12, 48, 16);
@@ -154,7 +153,7 @@ public class Dashboard {
         PANEL.add(DISPLAY_STATUS);
 
         PANEL_TAB = new JTabbedPane(JTabbedPane.TOP);
-        PANEL_TAB.setBounds(6, 40, 576, 320);
+        PANEL_TAB.setBounds(6, 40, 876, 620);
         PANEL.add(PANEL_TAB);
 
         TAB_SETTINGS = new JPanel();
@@ -162,53 +161,61 @@ public class Dashboard {
         PANEL_TAB.addTab("Settings", null, TAB_SETTINGS, null);
 
         LABEL_COINS = new JLabel("Coins");
-        LABEL_COINS
-            .setToolTipText("Select which coins to enable reinvestment with.");
+        LABEL_COINS.setToolTipText("Select which coins to enable selling with.");
         LABEL_COINS.setBounds(6, 6, 70, 16);
         TAB_SETTINGS.add(LABEL_COINS);
 
-        CHECKBOX_BTC = new JCheckBox("XLM");
-        CHECKBOX_BTC.setSelected(true);
-        CHECKBOX_BTC.setBounds(6, 34, 70, 23);
-        TAB_SETTINGS.add(CHECKBOX_BTC);
+        CHECKBOX_COIN = new JCheckBox("ETH");
+        CHECKBOX_COIN.setSelected(true);
+        CHECKBOX_COIN.setBounds(6, 34, 70, 23);
+        TAB_SETTINGS.add(CHECKBOX_COIN);
 
         LABEL_RESERVE = new JLabel("Reserve");
         LABEL_RESERVE.setToolTipText("Set an amount to reserve from trades.");
         LABEL_RESERVE.setBounds(88, 6, 61, 16);
         TAB_SETTINGS.add(LABEL_RESERVE);
 
-        INPUT_RESERVE_BTC = new JTextField();
-        INPUT_RESERVE_BTC.setText("0.00000000");
-        INPUT_RESERVE_BTC.setBounds(88, 32, 134, 28);
-        INPUT_RESERVE_BTC.setColumns(10);
-        TAB_SETTINGS.add(INPUT_RESERVE_BTC);
-
-        INPUT_MAX_BTC = new JTextField();
-        INPUT_MAX_BTC.setText("0.00000000");
-        INPUT_MAX_BTC.setBounds(244, 32, 134, 28);
-        INPUT_MAX_BTC.setColumns(10);
-        TAB_SETTINGS.add(INPUT_MAX_BTC);
-
-        LABEL_MAX = new JLabel("Maximum");
-        LABEL_MAX
-            .setToolTipText("Set the maximum value you would like to pay for 1 GHS/COIN.");
-        LABEL_MAX.setBounds(244, 6, 100, 16);
-        TAB_SETTINGS.add(LABEL_MAX);
+        INPUT_RESERVE_COIN = new JTextField();
+        INPUT_RESERVE_COIN.setText("0.00000000");
+        INPUT_RESERVE_COIN.setBounds(88, 32, 134, 28);
+        INPUT_RESERVE_COIN.setColumns(10);
+        TAB_SETTINGS.add(INPUT_RESERVE_COIN);
 
         LABEL_MIN = new JLabel("Minimum");
-        LABEL_MIN
-            .setToolTipText("Set the minimum value you would like to pay for 1 GHS/COIN.");
-        LABEL_MIN.setBounds(400, 6, 61, 16);
+        LABEL_MIN.setToolTipText("Set the minimum value you would like to sell 1 XXX/COIN.");
+        LABEL_MIN.setBounds(244, 6, 100, 16);
         TAB_SETTINGS.add(LABEL_MIN);
 
-        INPUT_MIN_BTC = new JTextField();
-        INPUT_MIN_BTC.setText("0.00000000");
-        INPUT_MIN_BTC.setBounds(400, 32, 134, 28);
-        INPUT_MIN_BTC.setColumns(10);
-        TAB_SETTINGS.add(INPUT_MIN_BTC);
+        INPUT_MIN_COIN = new JTextField();
+        INPUT_MIN_COIN.setText("0.00000000");
+        INPUT_MIN_COIN.setBounds(244, 32, 134, 28);
+        INPUT_MIN_COIN.setColumns(10);
+        TAB_SETTINGS.add(INPUT_MIN_COIN);
+
+        LABEL_MAX = new JLabel("Maximum");
+        LABEL_MAX.setToolTipText("Set the maximum value you would like to sell 1 XXX/COIN.");
+        LABEL_MAX.setBounds(400, 6, 61, 16);
+        TAB_SETTINGS.add(LABEL_MAX);
+
+        INPUT_MAX_COIN = new JTextField();
+        INPUT_MAX_COIN.setText("0.00000000");
+        INPUT_MAX_COIN.setBounds(400, 32, 134, 28);
+        INPUT_MAX_COIN.setColumns(10);
+        TAB_SETTINGS.add(INPUT_MAX_COIN);
+
+        LABEL_MIN_AMOUNT = new JLabel("Amount-Limit");
+        LABEL_MIN_AMOUNT.setToolTipText("Set the amount sell limit of this coin.");
+        LABEL_MIN_AMOUNT.setBounds(556, 6, 100, 16);
+        TAB_SETTINGS.add(LABEL_MIN_AMOUNT);
+
+        INPUT_MIN_AMOUNT_COIN = new JTextField();
+        INPUT_MIN_AMOUNT_COIN.setText("0.00000000");
+        INPUT_MIN_AMOUNT_COIN.setBounds(556, 32, 134, 28);
+        INPUT_MIN_AMOUNT_COIN.setColumns(10);
+        TAB_SETTINGS.add(INPUT_MIN_AMOUNT_COIN);
 
         BUTTON_SAVE = new JButton("Save Settings");
-        BUTTON_SAVE.setBounds(6, 234, 134, 29);
+        BUTTON_SAVE.setBounds(6, 560, 134, 29);
         BUTTON_SAVE.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 updateSettings();
@@ -327,15 +334,18 @@ public class Dashboard {
         PANEL_TAB.addTab("Log", null, TAB_LOG, null);
 
         SCROLLPANE = new JScrollPane();
-        SCROLLPANE.setBounds(0, 0, 555, 274);
+        SCROLLPANE.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//        SCROLLPANE.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        SCROLLPANE.setBounds(6, 6, 855, 570);
         TAB_LOG.add(SCROLLPANE);
 
         DISPLAY_LOG = new JTextArea();
-        SCROLLPANE.setViewportView(DISPLAY_LOG);
         DISPLAY_LOG.setFont(new Font("Monospaced", Font.PLAIN, 12));
         DISPLAY_LOG.setWrapStyleWord(true);
         DISPLAY_LOG.setLineWrap(true);
         DISPLAY_LOG.setEditable(false);
+        DISPLAY_LOG.setAutoscrolls(true);
+        SCROLLPANE.setViewportView(DISPLAY_LOG);
 
         TAB_ABOUT = new JPanel();
         TAB_ABOUT.setLayout(null);
@@ -345,13 +355,13 @@ public class Dashboard {
         TEXTPANE_ABOUT.setEditable(false);
         TEXTPANE_ABOUT.setBackground(UIManager.getColor("Panel.background"));
         TEXTPANE_ABOUT.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-        TEXTPANE_ABOUT.setText("This program was created to automate profit"
-            + " reinvestment from the Cex.io cloud mining platform. "
+        TEXTPANE_ABOUT.setText("This program was created to automate"
+            + " selling from the Cex.io platform. "
             + "This is freeware distributed under the MIT open-source"
             + " license. If this program has helped you at all, please"
             + " donate to motivate me to continue with development. All"
             + " feature/update suggestions are welcome on the projects "
-            + "Github page (https://github.com/zackurben/cex.io-reinvestor).");
+            + "Github page (https://github.com/ME-Merlin2010/cex.io-seller).");
         TEXTPANE_ABOUT.setBounds(6, 6, 543, 112);
         TAB_ABOUT.add(TEXTPANE_ABOUT);
 
@@ -359,8 +369,7 @@ public class Dashboard {
         TEXTPANE_BTC.setEditable(false);
         TEXTPANE_BTC.setBackground(UIManager.getColor("Panel.background"));
         TEXTPANE_BTC.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-        TEXTPANE_BTC
-            .setText("Motivation BTC @ 1HvXfXRP9gZqHPkQUCPKmt5wKyXDMADhvQ");
+        TEXTPANE_BTC.setText("Motivation BTC @ 3JEh8HAT5qntRUtET9xnaWGyrKVExTQnXv (min. 0.0001 BTC)");
         TEXTPANE_BTC.setBounds(6, 130, 543, 22);
         TAB_ABOUT.add(TEXTPANE_BTC);
 
@@ -368,23 +377,20 @@ public class Dashboard {
         TEXTPANE_CEX.setEditable(false);
         TEXTPANE_CEX.setBackground(UIManager.getColor("Panel.background"));
         TEXTPANE_CEX.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-        TEXTPANE_CEX
-            .setText("Cex.io Referral @ https://cex.io/r/0/kannibal3/0/");
+        TEXTPANE_CEX.setText("Cex.io referral @ https://cex.io/r/0/up114757661/0/");
         TEXTPANE_CEX.setBounds(6, 164, 543, 22);
         TAB_ABOUT.add(TEXTPANE_CEX);
 
         TEXTPANE_CRYPTSY = new JTextPane();
         TEXTPANE_CRYPTSY.setEditable(false);
         TEXTPANE_CRYPTSY.setBackground(UIManager.getColor("Panel.background"));
-        TEXTPANE_CRYPTSY
-            .setText("Cryptsy Trade   @ e5447842f0b6605ad45ced133b4cdd5135a4838c");
+        TEXTPANE_CRYPTSY.setText("PayPal @ https://www.paypal.me/TobiasPahl");
         TEXTPANE_CRYPTSY.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
         TEXTPANE_CRYPTSY.setBounds(6, 232, 543, 22);
         TAB_ABOUT.add(TEXTPANE_CRYPTSY);
 
         TEXTPANE_SCRYPT = new JTextPane();
-        TEXTPANE_SCRYPT
-            .setText("Scrypt Referral  @ http://scrypt.cc?ref=baaah");
+        TEXTPANE_SCRYPT.setText("Other donations accepted via email request!");
         TEXTPANE_SCRYPT.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
         TEXTPANE_SCRYPT.setEditable(false);
         TEXTPANE_SCRYPT.setBackground(UIManager.getColor("Panel.background"));
@@ -396,45 +402,50 @@ public class Dashboard {
      * Load settings from 'settings.txt' file, if it exists.
      * 
      * settings.txt contents:
-     * username,apiKey,apiSecret,btcActive,btcReserve,btcMax,btcMin
+     * username, apiKey, apiSecret, btcActive, btcReserve, btcMax, btcMin, btcMinAmount
      */
     private void loadSettings() {
         File file = new File("settings.txt");
         if (file.exists() && file.isFile()) {
             try {
                 Scanner scanner = new Scanner(file);
-				Scanner input = scanner.useDelimiter(",");
+                Scanner input = scanner.useDelimiter(",");
                 String settings[] = new String[11];
+
+                int a = 0;
+                while (input.hasNext()) {
+                	settings[a] = input.next();
+                	a++;
+                }
+
+                scanner.close();
 
                 // ignore first 3 inputs
                 // username,apiKey,apiSecret
-                for (int a = 0; a < settings.length; a++) {
-                    settings[a] = input.next();
-                }
-                
-                scanner.close();
-                
-                this.CHECKBOX_BTC.setSelected(Boolean.valueOf(settings[3]));
-                this.INPUT_RESERVE_BTC.setText(settings[4]);
-                this.INPUT_MAX_BTC.setText(settings[5]);
-                this.INPUT_MIN_BTC.setText(settings[6]);
-                this.user.out("Settings loaded successfully!");
+                CHECKBOX_COIN.setSelected(Boolean.valueOf(settings[3]));
+                INPUT_RESERVE_COIN.setText(settings[4]);
+                INPUT_MIN_COIN.setText(settings[5]);
+                INPUT_MAX_COIN.setText(settings[6]);
+                INPUT_MIN_AMOUNT_COIN.setText(settings[7]);
+                user.out("Dashboard-Settings loaded successfully!");
             } catch (FileNotFoundException e) {
+                user.out("Error while loading settings: ", e.getMessage());
                 e.printStackTrace();
             }
+        } else {
+        	user.out("No settings.txt found, no settings loaded.");
         }
-    }
+        
+    } 
 
     /**
-     * Write settings from GUI to user Reinvestor Object.
+     * Write settings from GUI to user Object.
      */
     private void updateSettings() {
-        this.user.coin.active = CHECKBOX_BTC.isSelected();
-        this.user.coin.reserve = new BigDecimal(INPUT_RESERVE_BTC.getText())
-            .setScale(8, RoundingMode.DOWN);
-        this.user.coin.max = new BigDecimal(INPUT_MAX_BTC.getText()).setScale(8,
-            RoundingMode.DOWN);
-        this.user.coin.min = new BigDecimal(INPUT_MIN_BTC.getText()).setScale(8,
-            RoundingMode.DOWN);
+        this.user.coin.active = CHECKBOX_COIN.isSelected();
+        this.user.coin.reserve = new BigDecimal(INPUT_RESERVE_COIN.getText()).setScale(8, RoundingMode.DOWN);
+        this.user.coin.min = new BigDecimal(INPUT_MIN_COIN.getText()).setScale(8, RoundingMode.DOWN);
+        this.user.coin.max = new BigDecimal(INPUT_MAX_COIN.getText()).setScale(8,RoundingMode.DOWN);
+        this.user.coin.minAmount = new BigDecimal(INPUT_MIN_AMOUNT_COIN.getText()).setScale(8,RoundingMode.DOWN);
     }
 }

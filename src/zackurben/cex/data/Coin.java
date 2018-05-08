@@ -25,8 +25,10 @@ import java.math.BigDecimal;
 
 public class Coin {
     public boolean active;
-    public BigDecimal reserve = new BigDecimal("0.00000000"),
-        max = new BigDecimal("0.00000000"), min = new BigDecimal("0.00000000");
+    public BigDecimal reserve = new BigDecimal("0.00000000");
+    public BigDecimal min = new BigDecimal("0.00000000");
+    public BigDecimal max = new BigDecimal("0.00000000");
+    public BigDecimal minAmount = new BigDecimal("0.00000000");
     public String pairTicker;
 
     /**
@@ -36,19 +38,19 @@ public class Coin {
      *        Determine if the coin is enabled for reinvestment.
      * @param reserve
      *        The amount to with-hold from reinvestment.
-     * @param max
-     *        The maximum amount allowed to pay for 1 XXX/COIN
      * @param min
-     *        The minimum amount allowed to pay for 1 XXX/COIN
+     *        The minimum amount allowed to sell for 1 XXX/COIN
+     * @param max
+     *        The maximum amount allowed to sell for 1 XXX/COIN
      * @param pairTicker
      *        The pair ticker for Cex.io
      */
-    public Coin(Boolean active, BigDecimal reserve, BigDecimal max,
-        BigDecimal min, String pairTicker) {
+    public Coin(Boolean active, BigDecimal reserve, BigDecimal min, BigDecimal max, BigDecimal minAmount, String pairTicker) {
         this.active = active;
         this.reserve = reserve;
-        this.max = max;
         this.min = min;
+        this.max = max;
+        this.minAmount = minAmount;
         this.pairTicker = pairTicker;
     }
 
@@ -56,8 +58,6 @@ public class Coin {
      * Overide the default toString method to give basic object data dump.
      */
     public String toString() {
-        return "{" + this.active + ":" + this.reserve.toPlainString() + ":"
-            + this.max.toPlainString() + ":" + this.min.toPlainString() + ":"
-            + this.pairTicker + "}";
+        return "{" + active + ":" + reserve.toPlainString() + ":" + min.toPlainString() + ":" + max.toPlainString() + ":" + pairTicker + "}";
     }
 }

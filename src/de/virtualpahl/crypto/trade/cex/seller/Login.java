@@ -1,22 +1,19 @@
+package de.virtualpahl.crypto.trade.cex.seller;
 /**
  * This project is licensed under the terms of the MIT license, you can read
  * more in LICENSE.txt; this project utilized the Google GSON library, licensed
  * under the Apache V2 License, which can be found at: gson/LICENSE.txt
  * 
- * Login.java
- * Version  : 1.1.0
- * Author   : Zack Urben
- * Contact  : zackurben@gmail.com
- * Creation : 12/31/13
+ * Login.java is based on the cex.io-reinvestor of Zack Urben
+ * Version  : 1.0.0
+ * Author   : Tobias Pahl
+ * Contact  : tobias@virtual-pahl.de
+ * Creation : 10.04.2018
  * 
- * This is Login GUI for the Reinvestor, when run in GUI mode.
- * 
- * Support:
- * Motivation BTC       @ 1HvXfXRP9gZqHPkQUCPKmt5wKyXDMADhvQ
- * Cex.io Referral      @ https://cex.io/r/0/kannibal3/0/
- * Scrypt Referral      @ http://scrypt.cc?ref=baaah
- * Cryptsy Trade Key    @ e5447842f0b6605ad45ced133b4cdd5135a4838c
- * Other donations accepted via email request.
+ * Motivation BTC    @ 3JEh8HAT5qntRUtET9xnaWGyrKVExTQnXv (minimum 0.0001 BTC)
+ * Cex.io referral   @ https://cex.io/r/0/up114757661/0/
+ * PayPal			 @ https://www.paypal.me/TobiasPahl
+ * Other donations accepted via email request!
  */
 
 import java.awt.event.ActionEvent;
@@ -53,7 +50,7 @@ public class Login {
      */
     private void initialize() {
         FRAME_LOGIN = new JFrame();
-        FRAME_LOGIN.setTitle("Cex.io Reinvestor v1.1.1 - By Zack Urben");
+        FRAME_LOGIN.setTitle("Cex.io Seller v1.0.0 - By Tobias Pahl");
         FRAME_LOGIN.setBounds(100, 100, 450, 235);
         FRAME_LOGIN.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FRAME_LOGIN.getContentPane().setLayout(null);
@@ -83,7 +80,7 @@ public class Login {
         LABEL_VERSION.setBounds(312, 167, 47, 16);
         PANEL.add(LABEL_VERSION);
 
-        LABEL_VERSION_NUMBER = new JLabel("1.1.1");
+        LABEL_VERSION_NUMBER = new JLabel("1.0.0");
         LABEL_VERSION_NUMBER.setEnabled(false);
         LABEL_VERSION_NUMBER.setBounds(371, 167, 61, 16);
         PANEL.add(LABEL_VERSION_NUMBER);
@@ -124,29 +121,32 @@ public class Login {
      * Load settings from 'settings.txt' file, if it exists.
      * 
      * settings.txt Example:
-     * username,apiKey,apiSecret,btcActive,btcReserve,btcMax,btcMin,nmcActive,
-     * nmcReserve,nmcMax,nmcMin
+     * username,apiKey,apiSecret,btcActive,btcReserve,btcMax,btcMin,btcMinAmount
      */
-    private void loadSettings() {
-        File file = new File("settings.txt");
-        if (file.exists() && file.isFile()) {
-            try {
-                Scanner scanner = new Scanner(file);
+	private void loadSettings() {
+		File file = new File("settings.txt");
+		if (file.exists() && file.isFile()) {
+			try {
+				Scanner scanner = new Scanner(file);
 				Scanner input = scanner.useDelimiter(",");
-                String temp[] = new String[3];
+				String settings[] = new String[11];
 
-                for (int a = 0; a < temp.length; a++) {
-                    temp[a] = input.next();
-                }
+				int a = 0;
+				while (input.hasNext()) {
+					settings[a] = input.next();
+					a++;
+				}
 
-                scanner.close();
-                
-                this.INPUT_USERNAME.setText(temp[0]);
-                this.INPUT_API_KEY.setText(temp[1]);
-                this.INPUT_API_SECRET.setText(temp[2]);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+				scanner.close();
+
+				this.INPUT_USERNAME.setText(settings[0]);
+				this.INPUT_API_KEY.setText(settings[1]);
+				this.INPUT_API_SECRET.setText(settings[2]);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("No settings.txt found, no settings loaded.");
+		}
     }
 }

@@ -49,6 +49,32 @@ public class Balance {
             return "{error:" + this.error + "}";
         }
     }
+    
+    public Currency getCurrency(String currency) {
+    	switch (currency) {
+		case "BTC":
+			return this.BTC;
+		case "ETH":
+			return this.ETH;
+		case "BCH":
+			return this.BCH;
+		case "DASH":
+			return this.DASH;
+		case "BTG":
+			return this.BTG;
+		case "XRP":
+			return this.XRP;
+		case "XLM":
+			return this.XLM;
+		case "ZEC":
+			return this.ZEC;
+		case "GHS":
+			return this.GHS;
+
+		default:
+			throw new IllegalArgumentException("Unknown currency!");
+		}
+    }
 
     /**
      * Internal Currency class for parsing input JSON data to additional

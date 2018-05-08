@@ -1,6 +1,0 @@
-Order error:
-{error:Error: Place order error: Insufficient funds.}
-
-Order error:
-{error:Error: Place order error: Insufficient funds.}
-
